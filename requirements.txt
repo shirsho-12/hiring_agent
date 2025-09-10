@@ -9,3 +9,5 @@ pypdf
 unstructured
 markdown
 langchain-community
+sentence-transformers
+faiss-cpu
