@@ -1,5 +1,6 @@
 import os
 import json
+from typing import Dict, Any
 from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.schema import StrOutputParser
@@ -7,6 +8,7 @@ from langchain.schema.runnable import Runnable
 from src.utils.rag_loader_hf import RAGLoader
 from src.agents.base_agent import BaseAgent
 from src.prompts.resume_evaluator_prompt import EVALUATOR_PROMPT
+from src.prompts.parser_prompt import EVALUATION_PARSER_PROMPT
 from src.config.config import EVALUATOR_MODEL
 
 
@@ -161,27 +163,41 @@ class ResumeEvaluatorAgentHF(BaseAgent):
                 self.logger.error(traceback.format_exc())
                 return self._create_error_response(error_msg)
 
-            # # 5. Parse and validate the response
-            # try:
-            #     evaluation_json = json.loads(evaluation)
-            #     required_keys = [
-            #         "self_evaluation_score",
-            #         "skills_score",
-            #         "experience_score",
-            #         "basic_info_score",
-            #         "education_score"
-            #     ]
+            # 5. Parse and validate the response using LLM
+            try:
+                self.logger.info("Parsing and validating evaluation with LLM...")
 
-            #     # Validate all required keys are present
-            #     if not all(key in evaluation_json for key in required_keys):
-            #         error_msg = f"Missing required keys in evaluation. Expected: {required_keys}, got: {list(evaluation_json.keys())}"
-            #         self.logger.error(error_msg)
-            #         return self._create_error_response(error_msg)
+                # Create a parser chain
+                parser_prompt = PromptTemplate.from_template(EVALUATION_PARSER_PROMPT)
+                parser_chain = (
+                    {"evaluation_text": lambda x: x}
+                    | parser_prompt
+                    | self.llm
+                    | StrOutputParser()
+                )
 
-            #     return json.dumps(evaluation_json, indent=2)
+                # Parse the evaluation
+                parsed_evaluation = parser_chain.invoke(evaluation)
+                self.logger.info("LLM parsing completed successfully.")
 
-            # except json.JSONDecodeError as e:
-            #     return self._create_error_response(f"Failed to parse evaluation as JSON: {str(e)}\nRaw response: {evaluation[:500]}")
+                # Parse the JSON response
+                try:
+                    evaluation_json = json.loads(parsed_evaluation)
+                    self.logger.info(
+                        f"Successfully parsed evaluation: {json.dumps(evaluation_json, indent=2)}"
+                    )
+                    return json.dumps(evaluation_json, indent=2)
+                except json.JSONDecodeError as e:
+                    self.logger.error(f"Failed to parse LLM output as JSON: {str(e)}")
+                    # Fall back to the original evaluation if parsing fails
+                    self.logger.info("Falling back to original evaluation output")
+                    return evaluation
+
+            except Exception as e:
+                error_msg = f"Error in LLM parsing: {str(e)}"
+                self.logger.error(error_msg, exc_info=True)
+                # Return the original evaluation as a fallback
+                return evaluation
 
         except Exception as e:
             return self._create_error_response(
