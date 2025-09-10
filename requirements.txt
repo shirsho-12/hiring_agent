@@ -8,3 +8,4 @@ wandb
 pypdf
 unstructured
 markdown
+langchain-community

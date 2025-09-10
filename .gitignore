@@ -113,4 +113,7 @@ dmypy.json
 .pyre/
 
 # RAG data
-data/rag_sources/
+# data/rag_sources/
+
+#Weights and Biases
+wandb/

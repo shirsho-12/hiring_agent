@@ -4,7 +4,7 @@ from src.utils.logger import get_logger
 from src.agents.resume_extractor import ResumeExtractorAgent
 from src.agents.resume_evaluator import ResumeEvaluatorAgent
 from src.agents.resume_summarizer import ResumeSummarizerAgent
-from src.score_formatter import format_scores
+
 
 class HiringPipeline:
     """Orchestrates the entire hiring agent pipeline."""
@@ -23,7 +23,7 @@ class HiringPipeline:
 
         # Read resume text
         try:
-            with open(resume_path, 'r') as file:
+            with open(resume_path, "r") as file:
                 resume_text = file.read()
         except FileNotFoundError:
             self.logger.error(f"Resume file not found at {resume_path}")
@@ -32,7 +32,9 @@ class HiringPipeline:
         # 1. Resume Extractor
         extracted_details = self.extractor.run(resume_text)
         if not extracted_details:
-            self.logger.error("Failed to extract details from resume. Aborting pipeline.")
+            self.logger.error(
+                "Failed to extract details from resume. Aborting pipeline."
+            )
             return
         self.logger.info(f"Extracted Details:\n{extracted_details}")
         wandb.log({"extracted_details": extracted_details})
@@ -46,12 +48,12 @@ class HiringPipeline:
         wandb.log({"evaluation_scores_json": evaluation_scores_json})
 
         # 3. Score Formatter
-        self.logger.info("Formatting scores...")
-        formatted_scores = format_scores(evaluation_scores_json)
-        total_score = sum(formatted_scores)
-        self.logger.info(f"Formatted Scores: {formatted_scores}")
-        self.logger.info(f"Total Score: {total_score} / 10")
-        wandb.log({"formatted_scores": formatted_scores, "total_score": total_score})
+        # self.logger.info("Formatting scores...")
+        # formatted_scores = format_scores(evaluation_scores_json)
+        # total_score = sum(formatted_scores)
+        # self.logger.info(f"Formatted Scores: {formatted_scores}")
+        # self.logger.info(f"Total Score: {total_score} / 10")
+        # wandb.log({"formatted_scores": formatted_scores, "total_score": total_score})
 
         # 4. Resume Summarizer
         final_summary = self.summarizer.run(extracted_details, evaluation_scores_json)

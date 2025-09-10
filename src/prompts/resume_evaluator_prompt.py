@@ -24,4 +24,7 @@ Score the extracted resume details, ensuring that skills, work experience, and e
 
 Provide the scores in a JSON format with the following keys:
 `self_evaluation_score`, `skills_score`, `experience_score`, `basic_info_score`, `education_score`.
+
+Example:
+{{'self_evaluation_score': 0.5, 'skills_score': 2.0, 'experience_score': 4.0, 'basic_info_score': 1.0, 'education_score': 2.0}}
 """
