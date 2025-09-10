@@ -1,0 +1,10 @@
+langchain
+langchain-openai
+python-dotenv
+numpy
+scikit-learn
+faiss-cpu
+wandb
+pypdf
+unstructured
+markdown
