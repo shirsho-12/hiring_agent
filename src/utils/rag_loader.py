@@ -27,16 +27,34 @@ def load_documents_from_directory(directory_path: str) -> List[Document]:
                 logger.error(f"Failed to load {filename}: {e}")
     return documents
 
-def create_vector_store_from_sources(directory_path: str) -> FAISS:
-    """Creates a FAISS vector store from all supported documents in a directory."""
-    logger.info(f"Creating vector store from all sources in {directory_path}...")
-    documents = load_documents_from_directory(directory_path)
+def create_vector_store_from_sources(sources_path: str, cache_path: str = "data/vector_store") -> FAISS:
+    """Creates or loads a FAISS vector store from all supported documents."""
+    index_path = os.path.join(cache_path, "faiss_index")
+    embeddings = OpenAIEmbeddings()
+
+    if os.path.exists(index_path):
+        logger.info(f"Loading cached vector store from {index_path}...")
+        try:
+            vector_store = FAISS.load_local(index_path, embeddings, allow_dangerous_deserialization=True)
+            logger.info("Cached vector store loaded successfully.")
+            return vector_store
+        except Exception as e:
+            logger.error(f"Failed to load cached vector store: {e}. Rebuilding...")
+
+    logger.info(f"Creating new vector store from all sources in {sources_path}...")
+    documents = load_documents_from_directory(sources_path)
     if not documents:
         logger.warning("No documents found to create a vector store.")
-        # Return an empty vector store if no documents are found
-        return FAISS.from_texts([""], OpenAIEmbeddings())
+        return FAISS.from_texts([""], embeddings)
     
-    embeddings = OpenAIEmbeddings()
     vector_store = FAISS.from_documents(documents, embeddings)
-    logger.info("Vector store created successfully from all sources.")
+    logger.info("Vector store created successfully.")
+
+    try:
+        logger.info(f"Saving vector store to {index_path}...")
+        vector_store.save_local(index_path)
+        logger.info("Vector store saved successfully.")
+    except Exception as e:
+        logger.error(f"Failed to save vector store: {e}")
+
     return vector_store

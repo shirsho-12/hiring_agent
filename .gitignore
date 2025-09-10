@@ -114,6 +114,7 @@ dmypy.json
 
 # RAG data
 # data/rag_sources/
+data/vector_store/
 
 #Weights and Biases
 wandb/

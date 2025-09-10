@@ -8,12 +8,18 @@ from src.agents.base_agent import BaseAgent
 from src.prompts.resume_extractor_prompt import EXTRACTOR_PROMPT
 from src.config.config import EXTRACTOR_MODEL
 
+
 class ResumeExtractorAgent(BaseAgent):
     """Agent responsible for extracting key details from a resume."""
 
     def __init__(self):
         super().__init__()
-        self.llm = ChatOpenAI(model=EXTRACTOR_MODEL, temperature=0.0)
+        self.llm = ChatOpenAI(
+            model=EXTRACTOR_MODEL,
+            base_url="https://openrouter.ai/api/v1",
+            api_key=os.environ.get("OPENROUTER_API_KEY"),
+            temperature=0.0,
+        )
         self.prompt_template = PromptTemplate.from_template(EXTRACTOR_PROMPT)
         self.chain: Runnable = self.prompt_template | self.llm | StrOutputParser()
 
