@@ -1,5 +1,6 @@
 import wandb
 from dotenv import load_dotenv
+from typing import Literal, Optional
 from src.utils.logger import get_logger
 from src.agents.resume_extractor import ResumeExtractorAgent
 from src.agents.resume_evaluator import ResumeEvaluatorAgent
@@ -7,13 +8,31 @@ from src.agents.resume_summarizer import ResumeSummarizerAgent
 
 
 class HiringPipeline:
-    """Orchestrates the entire hiring agent pipeline."""
+    """Orchestrates the entire hiring agent pipeline.
+    
+    This pipeline supports both HuggingFace and OpenAI embeddings.
+    """
 
-    def __init__(self, wandb_project: str = "hiring-agent-pipeline"):
+    def __init__(
+        self, 
+        wandb_project: str = "hiring-agent-pipeline",
+        embedding_type: Literal["openai", "huggingface"] = "openai",
+        model_name: Optional[str] = None
+    ):
+        """Initialize the hiring pipeline.
+        
+        Args:
+            wandb_project: Name of the Weights & Biases project
+            embedding_type: Type of embeddings to use ("openai" or "huggingface")
+            model_name: Name of the model to use for embeddings (only for HuggingFace)
+        """
         load_dotenv()
         self.logger = get_logger(self.__class__.__name__)
         self.extractor = ResumeExtractorAgent()
-        self.evaluator = ResumeEvaluatorAgent()
+        self.evaluator = ResumeEvaluatorAgent(
+            embedding_type=embedding_type,
+            model_name=model_name
+        )
         self.summarizer = ResumeSummarizerAgent()
         wandb.init(project=wandb_project)
 

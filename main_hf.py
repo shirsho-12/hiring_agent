@@ -1,4 +1,4 @@
-from src.pipeline_hf import HiringPipelineHF
+from src.pipeline import HiringPipeline
 
 if __name__ == "__main__":
     # Define the path to the resume and the job description
@@ -11,5 +11,9 @@ if __name__ == "__main__":
     """
 
     # Initialize and run the pipeline with HuggingFace embeddings
-    pipeline = HiringPipelineHF()
+    pipeline = HiringPipeline(
+        wandb_project="hiring-agent-hf-pipeline",
+        embedding_type="huggingface",
+        model_name="sentence-transformers/all-MiniLM-L6-v2"
+    )
     pipeline.run(resume_path, job_description)
