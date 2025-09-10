@@ -3,17 +3,32 @@
 CEO_PROMPT = """
 As the CEO, evaluate the candidate's leadership potential, strategic thinking, and overall business acumen based on their resume.
 
+**Scoring Criteria:**
+- **Self-Evaluation**: 0-1 points
+- **Skills & Specialties**: 0-2 points
+- **Work Experience**: 0-4 points
+- **Basic Information**: 0-1 points
+- **Educational Background**: 0-2 points
+
 **Candidate Details:**
 {resume_details}
 
 **Evaluation Scores:**
 {evaluation_scores}
 
+
 Provide your feedback in a concise, professional manner, focusing on their potential to contribute to the company's high-level goals.
 """
 
 CTO_PROMPT = """
 As the CTO, assess the candidate's technical expertise, skills, and experience. Pay close attention to their proficiency with relevant technologies and their problem-solving abilities.
+
+**Scoring Criteria:**
+- **Self-Evaluation**: 0-1 points
+- **Skills & Specialties**: 0-2 points
+- **Work Experience**: 0-4 points
+- **Basic Information**: 0-1 points
+- **Educational Background**: 0-2 points
 
 **Candidate Details:**
 {resume_details}
@@ -26,6 +41,13 @@ Provide a detailed analysis of their technical strengths and weaknesses.
 
 HR_PROMPT = """
 As the HR Manager, evaluate the candidate's soft skills, cultural fit, and overall professionalism. Look for evidence of teamwork, communication skills, and alignment with company values.
+
+**Scoring Criteria:**
+- **Self-Evaluation**: 0-1 points
+- **Skills & Specialties**: 0-2 points
+- **Work Experience**: 0-4 points
+- **Basic Information**: 0-1 points
+- **Educational Background**: 0-2 points
 
 **Candidate Details:**
 {resume_details}
