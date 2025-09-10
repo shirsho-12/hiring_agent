@@ -1,0 +1,46 @@
+**Sarah Johnson**
+
+**Contact Information**
+- Email: sarah.j@email.com
+- LinkedIn: linkedin.com/in/sarahj-ds
+- Location: Boston, MA
+
+**Position Applied For**
+Data Scientist
+
+**Professional Summary**
+Data Scientist with 3 years of experience in machine learning and data analysis. Proficient in Python, SQL, and data visualization. Passionate about using data to drive business decisions and solve complex problems.
+
+**Technical Skills**
+- **Programming**: Python (Pandas, NumPy, Scikit-learn), R, SQL
+- **Machine Learning**: Regression, Classification, Clustering, NLP
+- **Data Visualization**: Matplotlib, Seaborn, Tableau
+- **Tools**: Jupyter, Git, Docker, AWS (S3, EC2)
+- **Databases**: PostgreSQL, MongoDB
+
+**Professional Experience**
+
+**Data Scientist** | DataInsight Corp | 2020 - Present
+- Developed and deployed machine learning models that improved customer segmentation accuracy by 35%
+- Created interactive dashboards in Tableau that provided key business insights to stakeholders
+- Performed A/B testing to evaluate the impact of new features on user engagement
+- Collaborated with engineering teams to implement data pipelines
+
+**Data Analyst** | AnalyticsPro | 2018 - 2020
+- Analyzed large datasets to identify trends and patterns
+- Created reports and visualizations to communicate findings to non-technical stakeholders
+- Assisted in the development of predictive models
+- Automated data collection and cleaning processes
+
+**Education**
+
+**M.S. in Data Science**
+Northeastern University | 2016 - 2018
+
+**B.S. in Statistics**
+Boston University | 2012 - 2016
+
+**Projects**
+- Built a recommendation system for an e-commerce platform
+- Developed a sentiment analysis model for customer reviews
+- Created a dashboard to track and visualize COVID-19 data

@@ -1,0 +1,47 @@
+**David Kim**
+
+**Contact Information**
+- Email: david.kim@email.com
+- Phone: (555) 987-6543
+- GitHub: github.com/davidkim
+- Location: San Francisco, CA
+
+**Position Applied For**
+Senior Software Engineer (Full Stack)
+
+**Summary**
+Results-driven Senior Software Engineer with 6+ years of experience in full-stack development. Specialized in building scalable web applications using modern JavaScript frameworks and cloud technologies. Proven track record of leading development teams and delivering high-quality software solutions.
+
+**Technical Skills**
+- **Languages**: JavaScript (ES6+), TypeScript, Python, Java, SQL
+- **Frontend**: React, Redux, Next.js, HTML5, CSS3, Tailwind CSS
+- **Backend**: Node.js, Express, Django, Spring Boot
+- **Databases**: PostgreSQL, MongoDB, Redis
+- **Cloud**: AWS (EC2, S3, Lambda, RDS), Docker, Kubernetes
+- **Tools**: Git, Jira, Jenkins, Jest, Cypress
+
+**Professional Experience**
+
+**Senior Software Engineer** | TechNova Inc. | 2020 - Present
+- Led a team of 4 developers to rebuild the company's flagship product using React and Node.js, resulting in a 40% improvement in performance
+- Designed and implemented a microservices architecture that improved system scalability and reduced deployment times by 60%
+- Developed RESTful APIs handling 10,000+ requests per minute with 99.9% uptime
+- Mentored junior developers and conducted code reviews to maintain high code quality standards
+
+**Software Engineer** | CodeCraft Solutions | 2017 - 2020
+- Built and maintained multiple customer-facing web applications using React and Django
+- Implemented automated testing, reducing production bugs by 45%
+- Optimized database queries, improving application response time by 30%
+- Collaborated with product managers to define requirements and deliver features on schedule
+
+**Education**
+
+**M.S. in Computer Science**
+Stanford University | 2015 - 2017
+
+**B.S. in Computer Science**
+University of California, Berkeley | 2011 - 2015
+
+**Certifications**
+- AWS Certified Solutions Architect - Associate
+- Google Cloud Professional Data Engineer
