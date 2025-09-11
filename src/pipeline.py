@@ -1,40 +1,110 @@
 import wandb
 from dotenv import load_dotenv
-from typing import Literal, Optional
+from typing import Literal, Optional, Dict, Any
 from src.utils.logger import get_logger
-from src.agents.resume_extractor import ResumeExtractorAgent
-from src.agents.resume_evaluator import ResumeEvaluatorAgent
-from src.agents.resume_summarizer import ResumeSummarizerAgent
+from src.agents.resume import (
+    ResumeExtractorAgent,
+    ResumeEvaluatorAgent,
+    ResumeSummarizerAgent,
+    ResumeAnonymizer,
+    ResumeReformatter,
+)
 
 
 class HiringPipeline:
     """Orchestrates the entire hiring agent pipeline.
-    
+
     This pipeline supports both HuggingFace and OpenAI embeddings.
     """
 
     def __init__(
-        self, 
+        self,
         wandb_project: str = "hiring-agent-pipeline",
         embedding_type: Literal["openai", "huggingface"] = "openai",
-        model_name: Optional[str] = None
+        model_name: Optional[str] = None,
+        llm: Optional[Any] = None,
     ):
         """Initialize the hiring pipeline.
-        
+
         Args:
             wandb_project: Name of the Weights & Biases project
             embedding_type: Type of embeddings to use ("openai" or "huggingface")
             model_name: Name of the model to use for embeddings (only for HuggingFace)
+            llm: An optional LLM instance for agents that require it
         """
         load_dotenv()
         self.logger = get_logger(self.__class__.__name__)
+
+        # Initialize all agents
         self.extractor = ResumeExtractorAgent()
         self.evaluator = ResumeEvaluatorAgent(
-            embedding_type=embedding_type,
-            model_name=model_name
+            embedding_type=embedding_type, model_name=model_name
         )
         self.summarizer = ResumeSummarizerAgent()
+
+        # Initialize new resume processing agents if LLM is provided
+        if llm is not None:
+            self.anonymizer = ResumeAnonymizer(llm)
+            self.reformatter = ResumeReformatter(llm)
+
         wandb.init(project=wandb_project)
+
+    def anonymize_resume(self, resume_text: str, country: str = "United States") -> str:
+        """Anonymizes the resume by removing PII and standardizing location/company info.
+
+        Args:
+            resume_text: The raw resume text to be anonymized
+            country: The target country for location standardization
+
+        Returns:
+            str: The anonymized resume text
+        """
+        if not hasattr(self, "anonymizer"):
+            raise ValueError(
+                "LLM not provided during initialization. Anonymization requires an LLM instance."
+            )
+
+        self.logger.info("Anonymizing resume...")
+        return self.anonymizer.run(resume_text, country)
+
+    def reformat_resume(self, anonymized_resume: str) -> str:
+        """Reformats the resume to ensure clean and consistent formatting.
+
+        Args:
+            anonymized_resume: The anonymized resume text to be reformatted
+
+        Returns:
+            str: The reformatted resume text
+        """
+        if not hasattr(self, "reformatter"):
+            raise ValueError(
+                "LLM not provided during initialization. Reformating requires an LLM instance."
+            )
+
+        self.logger.info("Reformatting resume...")
+        return self.reformatter.run(anonymized_resume)
+
+    def process_resume(
+        self, resume_text: str, country: str = "United States"
+    ) -> Dict[str, str]:
+        """Processes a resume through the full anonymization and reformatting pipeline.
+
+        Args:
+            resume_text: The raw resume text to be processed
+            country: The target country for location standardization
+
+        Returns:
+            Dict containing the anonymized and reformatted resume
+        """
+        self.logger.info("Starting resume processing...")
+
+        # Anonymize the resume
+        anonymized = self.anonymize_resume(resume_text, country)
+
+        # Reformat the anonymized resume
+        reformatted = self.reformatter.run(anonymized)
+
+        return {"anonymized": anonymized, "reformatted": reformatted}
 
     def run(self, resume_path: str, job_description: str):
         """Runs the full pipeline from resume extraction to final summary."""

@@ -118,3 +118,6 @@ data/vector_store/
 
 #Weights and Biases
 wandb/
+
+#Kaggle data
+data/kagglehub

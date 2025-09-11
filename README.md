@@ -6,6 +6,8 @@ This project implements an advanced agentic pipeline for resume screening and ev
 
 - **Multi-Agent System**: A collaborative team of agents for extraction, evaluation, and summarization.
 - **RAG-Powered Evaluation**: The evaluator uses a knowledge base of past successful candidates (in PDF format) to provide more accurate, context-aware scores.
+- **Resume Anonymization**: Automatically removes PII, hyperlinks, and standardizes location/company information.
+- **Resume Reformatting**: Ensures consistent and professional formatting of resume content.
 - **Configurable Models & Prompts**: Easily swap out LLMs and prompts through a centralized configuration.
 - **Experiment Tracking**: Integrated with Weights & Biases to log and visualize pipeline runs, making it ideal for research and iteration.
 - **Robust Logging**: Detailed logging for clear visibility and easier debugging.
@@ -39,13 +41,65 @@ This project implements an advanced agentic pipeline for resume screening and ev
       - `job_descriptions/`: Add Markdown files with detailed job descriptions.
     - The pipeline will automatically scan these directories, process all supported files (PDF and Markdown), and build a unified vector store for the evaluator agent.
 
+## Resume Processing Features
+
+The pipeline now includes advanced resume processing capabilities:
+
+### Resume Anonymization
+- Removes all personal identifiable information (PII)
+- Strips out hyperlinks and social media handles
+- Standardizes location information to a specified country
+- Replaces company names with generic placeholders
+
+### Resume Reformatting
+- Ensures consistent spacing and layout
+- Standardizes section headers
+- Maintains a clean, professional appearance
+- Preserves a placeholder for candidate names
+
+### Example Usage
+
+```python
+from langchain.llms import OpenAI
+from src.pipeline import HiringPipeline
+
+# Initialize the pipeline with an LLM
+llm = OpenAI(temperature=0.7)
+pipeline = HiringPipeline(llm=llm)
+
+# Process a resume
+with open("path/to/resume.txt", "r") as f:
+    resume_text = f.read()
+
+# Anonymize and reformat the resume
+result = pipeline.process_resume(
+    resume_text=resume_text,
+    country="Canada"  # Standardize to Canadian locations
+)
+
+# Access the processed resume
+print("Anonymized Resume:", result['anonymized'])
+print("\nReformatted Resume:", result['reformatted'])
+```
+
 ## How to Run
 
 1.  **Configure the Pipeline** (Optional):
     - To change the models used by the agents, modify the settings in `src/config/config.py`.
     - To update the prompts, edit the files in the `src/prompts/` directory.
+    - For resume processing, ensure you provide an LLM instance when initializing the pipeline
 
 2.  **Run the Pipeline**:
+
+    For the full pipeline:
+    ```bash
+    python main.py
+    ```
+    
+    For just resume processing, use the example script:
+    ```bash
+    python examples/process_resume_example.py
+    ```
     ```bash
     python main.py
     ```
