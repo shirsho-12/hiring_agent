@@ -3,10 +3,12 @@ Pipeline Utilities
 
 This module provides utility functions for common resume processing tasks
 using the pipeline components.
+
+# NOTE: Batch processing functions have not been tested
 """
 
 from typing import Dict, Optional
-from ..pipeline import LocalizationPipeline, HiringPipeline
+from ..pipeline import LocalizationPipeline, HiringPipeline, JobPipeline
 
 
 def process_resume_pipeline(
@@ -23,9 +25,9 @@ def process_resume_pipeline(
 
     Returns:
         Dictionary containing:
-        - 'anonymized': anonymized_text
-        - 'reformatted': reformatted_text
-        - 'localized': localized_text
+        - 'anonymized': Anonymized resume content
+        - 'reformatted': Reformatted resume content
+        - 'localized': Localized resume content
     """
     # Initialize the pipeline
     pipeline = LocalizationPipeline(target_country=country)
@@ -81,6 +83,12 @@ def hiring_pipeline(
         embedding_type: Type of embeddings to use ("openai" or "huggingface")
         embedding_model_name: Name of the model to use for embeddings (only for HuggingFace
                               or custom OpenAI models)
+        job_description: The job description to evaluate against
+    Returns:
+        Dictionary containing:
+        - 'extracted_info': Extracted information from the resume
+        - 'evaluation': Evaluation of the resume against the job description
+        - 'summary': Summary of the candidate's suitability for the job
     """
     # Initialize the pipeline
     pipeline = HiringPipeline(
@@ -104,11 +112,64 @@ def batch_hiring_pipeline(
         embedding_type: Type of embeddings to use ("openai" or "huggingface")
         embedding_model_name: Name of the model to use for embeddings (only for HuggingFace
                               or custom OpenAI models)
+    Returns:
+        Dictionary containing the processed results for each resume
     """
     results = {}
     for resume_id, resume_content in resumes.items():
         results[resume_id] = hiring_pipeline(
             resume_text=resume_content,
+            job_description=job_description,
+            embedding_type=embedding_type,
+            embedding_model_name=embedding_model_name,
+        )
+    return results
+
+
+def job_pipeline(
+    job_description: str,
+    embedding_type: str = "openai",
+    embedding_model_name: Optional[str] = None,
+) -> Dict[str, str]:
+    """
+    Run the complete job pipeline (company criteria + previous hires).
+
+    Args:
+        job_description: The job description to analyze
+        embedding_type: Type of embeddings to use ("openai" or "huggingface")
+        embedding_model_name: Name of the model to use for embeddings (only for HuggingFace
+                              or custom OpenAI models)
+    Returns:
+        Dictionary containing:
+        - 'company_criteria': Generated company criteria
+        - 'previous_hires': Generated previous hire suggestions
+    """
+    # Initialize the pipeline
+    pipeline = JobPipeline(
+        embedding_type=embedding_type, embedding_model_name=embedding_model_name
+    )
+    return pipeline.run(job_description)
+
+
+def batch_job_pipeline(
+    job_descriptions: Dict[str, str],
+    embedding_type: str = "openai",
+    embedding_model_name: Optional[str] = None,
+) -> Dict[str, Dict[str, str]]:
+    """
+    Process multiple job descriptions in batch through the complete job pipeline.
+
+    Args:
+        job_descriptions: Dictionary of {job_id: job_description} pairs
+        embedding_type: Type of embeddings to use ("openai" or "huggingface")
+        embedding_model_name: Name of the model to use for embeddings (only for HuggingFace
+                              or custom OpenAI models)
+    Returns:
+        Dictionary containing the processed results for each job description
+    """
+    results = {}
+    for job_id, job_description in job_descriptions.items():
+        results[job_id] = job_pipeline(
             job_description=job_description,
             embedding_type=embedding_type,
             embedding_model_name=embedding_model_name,

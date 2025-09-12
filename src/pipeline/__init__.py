@@ -7,5 +7,7 @@ anonymization.
 
 from .localization_pipeline import LocalizationPipeline
 from .hiring_pipeline import HiringPipeline
+from .job_pipeline import JobPipeline
 
-__all__ = ["LocalizationPipeline", "HiringPipeline"]
+
+__all__ = ["LocalizationPipeline", "HiringPipeline", "JobPipeline"]
