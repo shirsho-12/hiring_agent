@@ -21,7 +21,6 @@ class HiringPipeline(BasePipeline):
         """Initialize the hiring pipeline.
 
         Args:
-            wandb_project: Name of the Weights & Biases project
             embedding_type: Type of embeddings to use ("openai" or "huggingface")
             model_name: Name of the model to use for embeddings (only for HuggingFace)
             llm: An optional LLM instance for agents that require it
@@ -60,7 +59,6 @@ class HiringPipeline(BasePipeline):
         # total_score = sum(formatted_scores)
         # self.logger.info(f"Formatted Scores: {formatted_scores}")
         # self.logger.info(f"Total Score: {total_score} / 10")
-        # wandb.log({"formatted_scores": formatted_scores, "total_score": total_score})
 
         # 4. Resume Summarizer
         final_summary = self.summarizer.run(extracted_details, evaluation_scores_json)

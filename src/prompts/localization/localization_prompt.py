@@ -6,8 +6,8 @@ specific parameters like target country, education level, and experience.
 """
 
 LOCALIZATION_PROMPT = """
-You are an expert in resume localization and Singapore's hiring practices. Your task is to adapt the provided resume for the target country/region while maintaining its professional integrity and effectiveness.
-
+You are an expert in resume localization and {target_country}'s hiring practices. Your task is to adapt the provided resume.
+You will see the original resume with `[CONTENT]` tags, replace these tags with the actual content when using the prompt. Tags such as `[NAME]`, `[EMAIL]`, etc., are placeholders for personal information.
 ## Resume Localization Parameters:
 - Target Country: {target_country}
 
@@ -15,57 +15,32 @@ You are an expert in resume localization and Singapore's hiring practices. Your 
 {resume_text}
 
 ## Resume Localization Guidelines:
-
-### 1. Personal Information
-- Format contact information according to local standards
-- Adjust education system references (e.g., GPA to local grading system)
-- Adjust name order if needed (e.g., family name first in some Asian countries)
-- Localize address format
-
-### 2. Professional Summary/Objective
-- Adapt to local expectations for self-presentation
-- Adjust level of formality
-- Include relevant local keywords for ATS systems
-- Align with local job market expectations
-
-### 3. Work Experience
-- Localize job titles to match target country's conventions
-- Adapt company names if they have local equivalents
+- Replace the following placeholders with appropriate terms to fit the target country:
+   - Company names: [COMPANY X], [TECH COMPANY], [FINANCIAL INSTITUTION], etc.
+   - Department names: [DEPARTMENT] or [TEAM NAME]
+   - Manager/Supervisor names: [MANAGER], [SUPERVISOR]
+   - Project names: [PROJECT X], [INTERNAL TOOL], etc.
 - Convert employment dates to local format
-- Adjust work experience descriptions to highlight locally valued skills
-- Quantify achievements using local metrics/currencies
-
-### 4. Education
 - Convert degree names to local equivalents
-- Adapt institution names if they have local recognition
-- Adjust grading systems (e.g., GPA to local scale)
-- Include relevant local certifications or qualifications
-
-### 5. Skills Section
+- Replace [UNIVERSITY], [COLLEGE], [INSTITUTION] with actual names
+- Localize course names if necessary
+- Adjust grading systems to local scales (e.g. 4.0 GPA to 5.0 scale)
 - Localize technical terminology
 - Include region-specific skills if relevant
 - Adapt language proficiency descriptions to local standards
 - Highlight skills most valued in the target job market
-
-### 6. Formatting & Structure
 - Use local resume format (chronological, functional, or hybrid)
 - Adjust section ordering to match local preferences
 - Use appropriate date formats
-- Use local conventions for file naming
-
-### 7. Cultural Adaptations
-- Adjust level of directness in language
-- Consider local business etiquette
-- Adapt to local norms for self-promotion
-- Be aware of cultural sensitivities
 
 ## Output Instructions:
 1. Provide the fully localized resume content
 2. Maintain the original meaning and professional impact
 3. Preserve technical accuracy
-4. Use clear, professional language
-5. Format according to local standards
+4. Format according to local standards
 
+You are to output only the localized resume content without any additional commentary or explanations.
+The final output should not have any placeholders for job or education related information.
 ## Localized Resume:
 [Your localized resume content here]
 """

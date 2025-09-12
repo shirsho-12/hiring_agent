@@ -53,12 +53,14 @@ class LocalizationPipeline(BasePipeline):
             # Step 1: Anonymization
             if anonymize:
                 anonymized_content = self.anonymizer.run(resume_text=current_content)
+                self.logger.info("Anonymized resume:\n %s", anonymized_content)
                 current_content = anonymized_content
             # Step 2: Reformatting
             if reformat:
                 reformatted_content = self.reformatter.run(
                     anonymized_resume_text=current_content
                 )
+                self.logger.info("Reformatted resume:\n %s", reformatted_content)
                 current_content = reformatted_content
             # Step 3: Localization
             if localize:
@@ -66,6 +68,7 @@ class LocalizationPipeline(BasePipeline):
                     resume_text=current_content,
                     target_country=self.target_country,
                 )
+                self.logger.info("Localized resume:\n %s", localized_content)
                 current_content = localized_content
             return current_content
         except Exception as e:

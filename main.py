@@ -20,22 +20,27 @@ if __name__ == "__main__":
     """
 
     load_dotenv()
-    wandb.login()
-    wandb.init(project="hiring-agent-pipeline", name=f"run-{curr_time}")
+    # wandb.login()
+    # wandb.init(project="hiring-agent-pipeline", name=f"run-{curr_time}")
 
     with open(resume_path, "r") as file:
         resume_content = file.read()
 
     # Initialize and run the pipeline
     resume_dct = process_resume_pipeline(resume_content, country="Singapore")
-    wandb.log(resume_dct)
+    # write the results to markdown files
+    for k, v in resume_dct.items():
+        os.makedirs(f"results/{curr_time}", exist_ok=True)
+        with open(f"results/{curr_time}/{k}_resume.md", "w") as f:
+            f.write(v)
+    # wandb.log(resume_dct)
 
-    final_resume = hiring_pipeline(
-        resume_text=resume_dct["localized"],
-        job_description=job_description,
-        embedding_type="huggingface",
-        embedding_model_name="sentence-transformers/all-MiniLM-L6-v2",
-    )
-    wandb.log(final_resume)
+    # final_resume = hiring_pipeline(
+    #     resume_text=resume_dct["localized"],
+    #     job_description=job_description,
+    #     embedding_type="huggingface",
+    #     embedding_model_name="sentence-transformers/all-MiniLM-L6-v2",
+    # )
+    # wandb.log(final_resume)
 
-    wandb.finish()
+    # wandb.finish()
