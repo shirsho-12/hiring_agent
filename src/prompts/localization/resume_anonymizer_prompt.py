@@ -10,7 +10,7 @@ You are an expert in data privacy and anonymization. Your task is to process the
 
 ## Instructions:
 1. **Remove or Replace PII**:
-   - Names: Replace with [FIRST NAME], [LAST NAME]
+   - Names: Replace with [CANDIDATE NAME]
    - Email addresses: Replace with [EMAIL]
    - Phone numbers: Replace with [PHONE]
    - Physical addresses: Replace with [ADDRESS]
