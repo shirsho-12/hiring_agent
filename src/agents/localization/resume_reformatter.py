@@ -7,7 +7,7 @@ from src.prompts.localization.resume_reformatter_prompt import RESUME_REFORMATTE
 from src.config.config import REFORMATTER_MODEL, BASE_URL, API_KEY, TEMPERATURE
 
 
-class ResumeReformatter(BaseAgent):
+class ResumeReformatterAgent(BaseAgent):
     """An agent that reformats a resume to ensure it is clean, professional, and consistently structured."""
 
     def __init__(self):

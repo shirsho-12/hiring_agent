@@ -1,5 +1,4 @@
 import re
-import os
 from typing import Dict, Any
 from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
@@ -7,7 +6,7 @@ from langchain.schema import StrOutputParser
 from langchain.schema.runnable import Runnable
 
 from src.agents.base_agent import BaseAgent
-from src.prompts.anonymization import RESUME_ANONYMIZER_PROMPT
+from src.prompts.localization import RESUME_ANONYMIZER_PROMPT
 from src.config.config import ANONYMIZER_MODEL, BASE_URL, API_KEY, TEMPERATURE
 
 
