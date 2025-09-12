@@ -6,16 +6,13 @@ specific parameters like target country, education level, and experience.
 """
 
 LOCALIZATION_PROMPT = """
-You are an expert in resume localization and {target_country}'s hiring practices. Your task is to adapt the provided resume.
-You will see the original resume with `[CONTENT]` tags, replace these tags with the actual content when using the prompt. Tags such as `[NAME]`, `[EMAIL]`, etc., are placeholders for personal information.
+You are an expert in formatting to a {target_country}'s hiring practices. Your task is to adapt the provided resume.
 ## Resume Localization Parameters:
 - Target Country: {target_country}
 
-## Resume to Localize:
-{resume_text}
 
-## Resume Localization Guidelines:
-- Replace the following placeholders with appropriate terms to fit the target country:
+## Guidelines:
+- Replace the following placeholders with companies and departments present in the target country, use real-world examples as much as possible:
    - Company names: [COMPANY X], [TECH COMPANY], [FINANCIAL INSTITUTION], etc.
    - Department names: [DEPARTMENT] or [TEAM NAME]
    - Manager/Supervisor names: [MANAGER], [SUPERVISOR]
@@ -39,10 +36,15 @@ You will see the original resume with `[CONTENT]` tags, replace these tags with 
 3. Preserve technical accuracy
 4. Format according to local standards
 
-You are to output only the localized resume content without any additional commentary or explanations.
+
+## Input Resume:
+{resume_text}
+
+
+You are to output only the modified resume content without any additional commentary or explanations.
 The final output should not have any placeholders for job or education related information.
-## Localized Resume:
-[Your localized resume content here]
+## Result Resume:
+[Model output]
 """
 
 # ## Additional Context (if any):
