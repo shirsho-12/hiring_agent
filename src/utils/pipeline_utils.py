@@ -87,3 +87,30 @@ def hiring_pipeline(
         embedding_type=embedding_type, embedding_model_name=embedding_model_name
     )
     return pipeline.run(resume_text, job_description)
+
+
+def batch_hiring_pipeline(
+    resumes: Dict[str, str],
+    job_description: str,
+    embedding_type: str = "openai",
+    embedding_model_name: Optional[str] = None,
+) -> Dict[str, Dict[str, str]]:
+    """
+    Process multiple resumes in batch through the complete hiring pipeline.
+
+    Args:
+        resumes: Dictionary of {resume_id: resume_content} pairs
+        job_description: The job description to evaluate against
+        embedding_type: Type of embeddings to use ("openai" or "huggingface")
+        embedding_model_name: Name of the model to use for embeddings (only for HuggingFace
+                              or custom OpenAI models)
+    """
+    results = {}
+    for resume_id, resume_content in resumes.items():
+        results[resume_id] = hiring_pipeline(
+            resume_text=resume_content,
+            job_description=job_description,
+            embedding_type=embedding_type,
+            embedding_model_name=embedding_model_name,
+        )
+    return results
