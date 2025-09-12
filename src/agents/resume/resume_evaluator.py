@@ -8,7 +8,7 @@ from langchain.schema.runnable import Runnable
 from src.agents.base_agent import BaseAgent
 from src.prompts.resume import RESUME_EVALUATOR_PROMPT
 from src.prompts.parser_prompt import EVALUATION_PARSER_PROMPT
-from src.config.config import EVALUATOR_MODEL
+from src.config.config import EVALUATOR_MODEL, API_KEY, BASE_URL, TEMPERATURE
 
 # Import the appropriate RAG loader based on the embedding type
 try:
@@ -31,7 +31,7 @@ class ResumeEvaluatorAgent(BaseAgent):
     def __init__(
         self,
         embedding_type: Literal["openai", "huggingface"] = "openai",
-        model_name: Optional[str] = None,
+        embedding_model_name: Optional[str] = None,
     ):
         """Initialize the ResumeEvaluatorAgent.
 
@@ -44,9 +44,9 @@ class ResumeEvaluatorAgent(BaseAgent):
         # Initialize LLM
         self.llm = ChatOpenAI(
             model=EVALUATOR_MODEL,
-            base_url="https://openrouter.ai/api/v1",
-            api_key=os.environ.get("OPENROUTER_API_KEY"),
-            temperature=0.0,
+            base_url=BASE_URL,
+            api_key=API_KEY,
+            temperature=TEMPERATURE,
         )
 
         # Set up the evaluation chain
@@ -55,7 +55,7 @@ class ResumeEvaluatorAgent(BaseAgent):
 
         # Initialize the appropriate vector store
         self.embedding_type = embedding_type.lower()
-        self.model_name = model_name
+        self.embedding_model_name = embedding_model_name
         self.vector_store = self._initialize_vector_store()
 
     def _initialize_vector_store(self):
@@ -68,10 +68,10 @@ class ResumeEvaluatorAgent(BaseAgent):
                         "Make sure to install the required dependencies."
                     )
                 self.logger.info(
-                    f"Initializing HuggingFace embeddings with model: {self.model_name}"
+                    f"Initializing HuggingFace embeddings with model: {self.embedding_model_name}"
                 )
                 rag_loader = HFRAGLoader(
-                    model_name=self.model_name
+                    model_name=self.embedding_model_name
                     or "sentence-transformers/all-MiniLM-L6-v2"
                 )
                 return rag_loader.get_vector_store("data/rag_sources")

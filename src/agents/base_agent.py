@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from src.utils.logger import get_logger
 
+
 class BaseAgent(ABC):
     """An abstract base class for all agents in the pipeline."""
 

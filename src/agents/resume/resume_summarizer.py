@@ -11,7 +11,7 @@ from src.prompts.resume import (
     HR_PROMPT,
     FINAL_SUMMARY_PROMPT,
 )
-from src.config.config import SUMMARIZER_MODEL
+from src.config.config import SUMMARIZER_MODEL, API_KEY, BASE_URL, TEMPERATURE
 
 
 class ResumeSummarizerAgent(BaseAgent):
@@ -21,9 +21,9 @@ class ResumeSummarizerAgent(BaseAgent):
         super().__init__()
         self.llm = ChatOpenAI(
             model=SUMMARIZER_MODEL,
-            base_url="https://openrouter.ai/api/v1",
-            api_key=os.environ.get("OPENROUTER_API_KEY"),
-            temperature=0.0,
+            base_url=BASE_URL,
+            api_key=API_KEY,
+            temperature=TEMPERATURE,
         )
 
     def _create_sub_agent_chain(self, prompt: str) -> Runnable:

@@ -37,7 +37,7 @@ class LocalizationAgent(BaseAgent):
         self.chain: Runnable = self.prompt_template | self.llm | StrOutputParser()
 
     def run(
-        self, resume_content: str, target_country: str = "Singapore"
+        self, resume_text: str, target_country: str = "Singapore"
     ) -> Dict[str, Any]:
         """
         Localize a resume for a specific country/region.
@@ -54,7 +54,7 @@ class LocalizationAgent(BaseAgent):
 
             # Prepare the input for the LLM
             input_data = {
-                "resume_content": resume_content,
+                "resume_text": resume_text,
                 "target_country": target_country,
             }
 
@@ -92,7 +92,7 @@ class LocalizationAgent(BaseAgent):
         for resume_id, resume_content in resumes.items():
             try:
                 results[resume_id] = self.run(
-                    resume_content=resume_content,
+                    resume_text=resume_content,
                     target_country=target_country,
                     **kwargs,
                 )

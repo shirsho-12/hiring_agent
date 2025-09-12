@@ -9,7 +9,7 @@ RESUME_REFORMATTER_PROMPT = """
 
 **Anonymized Resume Text:**
 
-{anonymized_resume_text}
+{resume_text}
 
 **Reformatted Resume:**
 """
