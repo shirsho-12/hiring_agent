@@ -58,7 +58,7 @@ class AnonymizationAgent(BaseAgent):
 
         return text
 
-    def run(self, resume_text: str) -> Dict[str, Any]:
+    def run(self, resume_text: str) -> str:
         """
         Anonymize the resume text.
 

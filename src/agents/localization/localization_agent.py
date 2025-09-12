@@ -36,9 +36,7 @@ class LocalizationAgent(BaseAgent):
         self.prompt_template = PromptTemplate.from_template(LOCALIZATION_PROMPT)
         self.chain: Runnable = self.prompt_template | self.llm | StrOutputParser()
 
-    def run(
-        self, resume_text: str, target_country: str = "Singapore"
-    ) -> Dict[str, Any]:
+    def run(self, resume_text: str, target_country: str = "Singapore") -> str:
         """
         Localize a resume for a specific country/region.
 
@@ -69,10 +67,7 @@ class LocalizationAgent(BaseAgent):
             self.logger.error(
                 f"Error during content localization: {str(e)}", exc_info=True
             )
-            return {
-                "error": str(e),
-                "success": False,
-            }
+            raise RuntimeError("Failed to localize resume") from e
 
     def batch_localize_resumes(
         self, resumes: Dict[str, str], target_country: str, **kwargs

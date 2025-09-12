@@ -25,6 +25,7 @@ class HFEmbeddingsWrapper:
             model_kwargs: Additional arguments to pass to the model
             encode_kwargs: Additional arguments to pass to the encode method
         """
+        super().__init__()
         if model_kwargs is None:
             model_kwargs = {"device": "cpu"}
         if encode_kwargs is None:

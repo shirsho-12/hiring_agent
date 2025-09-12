@@ -1,4 +1,7 @@
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # --- Model Configuration ---
 # You can swap out the model names here. It's also possible to use environment

@@ -11,15 +11,8 @@ from src.prompts.parser_prompt import EVALUATION_PARSER_PROMPT
 from src.config.config import EVALUATOR_MODEL, API_KEY, BASE_URL, TEMPERATURE
 
 # Import the appropriate RAG loader based on the embedding type
-try:
-    from src.utils.rag_loader_hf import RAGLoader as HFRAGLoader
-except ImportError:
-    HFRAGLoader = None
 
-try:
-    from src.utils.rag_loader import create_vector_store_from_sources
-except ImportError:
-    create_vector_store_from_sources = None
+from src.rag_loader import HFRAGLoader, OpenAIRAGLoader
 
 
 class ResumeEvaluatorAgent(BaseAgent):
@@ -77,13 +70,8 @@ class ResumeEvaluatorAgent(BaseAgent):
                 return rag_loader.get_vector_store("data/rag_sources")
 
             elif self.embedding_type == "openai":
-                if create_vector_store_from_sources is None:
-                    raise ImportError(
-                        "OpenAI RAG loader not available. "
-                        "Make sure to install the required dependencies."
-                    )
-                self.logger.info("Initializing OpenAI embeddings")
-                return create_vector_store_from_sources("data/rag_sources")
+                rag_loader = OpenAIRAGLoader()
+                return rag_loader.get_vector_store("data/rag_sources")
 
             else:
                 raise ValueError(f"Unsupported embedding type: {self.embedding_type}")
