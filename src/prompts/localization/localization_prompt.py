@@ -10,11 +10,6 @@ You are an expert in resume localization and Singapore's hiring practices. Your 
 
 ## Resume Localization Parameters:
 - Target Country: {target_country}
-- Education Level: {education_level}
-- Experience Level: {experience_level}
-- Target Job Title: {target_job_title}
-- Target Industry: {target_industry}
-- Additional Context: {additional_context}
 
 ## Resume to Localize:
 {resume_text}
@@ -74,3 +69,9 @@ You are an expert in resume localization and Singapore's hiring practices. Your 
 ## Localized Resume:
 [Your localized resume content here]
 """
+
+# ## Additional Context (if any):
+# - Education Level: {education_level}
+# - Experience Level: {experience_level}
+# - Target Job Title: {target_job_title}
+# - Target Industry: {target_industry}

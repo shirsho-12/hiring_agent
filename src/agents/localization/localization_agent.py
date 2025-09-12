@@ -1,7 +1,4 @@
-import os
-from typing import Dict, Any, Optional
-from datetime import datetime
-import json
+from typing import Dict, Any
 
 from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
@@ -40,14 +37,7 @@ class LocalizationAgent(BaseAgent):
         self.chain: Runnable = self.prompt_template | self.llm | StrOutputParser()
 
     def run(
-        self,
-        resume_content: str,
-        target_country: str = "Singapore",
-        education_level: Optional[str] = None,
-        experience_level: Optional[str] = None,
-        target_job_title: Optional[str] = None,
-        target_industry: Optional[str] = None,
-        additional_context: Optional[Dict[str, Any]] = None,
+        self, resume_content: str, target_country: str = "Singapore"
     ) -> Dict[str, Any]:
         """
         Localize a resume for a specific country/region.
@@ -55,13 +45,6 @@ class LocalizationAgent(BaseAgent):
         Args:
             resume_content: The resume content to localize
             target_country: The target country/region for localization
-            education_level: Candidate's highest education level
-                            (e.g., "bachelor", "master", "phd")
-            experience_level: Candidate's experience level
-                            (e.g., "entry", "mid", "senior")
-            target_job_title: The job title/position being targeted
-            target_industry: The industry of the target position
-            additional_context: Optional additional context for localization
 
         Returns:
             localized_resume: The localized resume content
@@ -73,35 +56,14 @@ class LocalizationAgent(BaseAgent):
             input_data = {
                 "resume_content": resume_content,
                 "target_country": target_country,
-                "education_level": education_level or "Not specified",
-                "experience_level": experience_level or "Not specified",
-                "target_job_title": target_job_title or "Not specified",
-                "target_industry": target_industry or "Not specified",
             }
 
             # Run the localization
-            start_time = datetime.utcnow()
             localized_content = self.chain.invoke(input_data)
-            processing_time = (datetime.utcnow() - start_time).total_seconds()
 
-            self.logger.info(
-                f"Content localization completed in {processing_time:.2f} seconds"
-            )
+            self.logger.info(f"Content localization completed successfully.")
 
-            return {
-                "localized_resume": localized_content,
-                "metadata": {
-                    "target_country": target_country,
-                    "processing_time_seconds": processing_time,
-                    "localization_timestamp": datetime.utcnow().isoformat(),
-                    "localization_parameters": {
-                        "education_level": education_level,
-                        "experience_level": experience_level,
-                        "target_job_title": target_job_title,
-                        "target_industry": target_industry,
-                    },
-                },
-            }
+            return localized_content
 
         except Exception as e:
             self.logger.error(
