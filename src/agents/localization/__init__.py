@@ -6,10 +6,12 @@ job descriptions, and other professional documents to different locales, industr
 and experience levels.
 """
 
-from .localization_agent import LocalizationAgent
+from .resume_localizer import LocalizationAgent
 from .resume_anonymizer import AnonymizationAgent
+from .resume_reformatter import ResumeReformatterAgent
 
 __all__ = [
     "LocalizationAgent",
     "AnonymizationAgent",
+    "ResumeReformatterAgent",
 ]

@@ -8,7 +8,7 @@ including localization and anonymization.
 from src.pipeline.base_pipeline import BasePipeline
 from ..agents.localization.resume_anonymizer import AnonymizationAgent
 from ..agents.localization.resume_reformatter import ResumeReformatterAgent
-from ..agents.localization.localization_agent import LocalizationAgent
+from ..agents.localization.resume_localizer import LocalizationAgent
 
 
 class LocalizationPipeline(BasePipeline):
