@@ -12,3 +12,5 @@ langchain-community
 sentence-transformers
 faiss-cpu
 langchain_huggingface
+matplotlib
+sentencepiece
