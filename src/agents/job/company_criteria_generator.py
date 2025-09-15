@@ -59,16 +59,70 @@ class CompanyCriteriaGeneratorAgent(BaseAgent):
 
         return text
 
-    def run(self, job_description: str) -> str:
+    def run(
+        self,
+        job_classification: str,
+        job_type: str,
+        position: str,
+        job_description: str,
+    ) -> str:
         """
         Generate company criteria based on the provided job description.
 
         Args:
+            job_classification: The job classification to consider
+            job_type: The job type to consider
+            position: The position to consider
             job_description: The job description text to analyze
 
         Returns:
             A string containing the generated company criteria
         """
         preprocessed_text = self._preprocess_text(job_description)
-        response = self.chain.invoke({"job_description": preprocessed_text})
+        response = self.chain.invoke(
+            {
+                "job_description": preprocessed_text,
+                "job_classification": job_classification,
+                "job_type": job_type,
+                "position": position,
+            }
+        )
         return response
+
+    def batch(self, jobs: List[Dict[str, str]]) -> List[Dict[str, str]]:
+        """
+        Process multiple job descriptions in batch to generate company criteria.
+
+        Args:
+            jobs: List of job descriptions to process
+
+        Returns:
+            Dictionary of {job_id: company_criteria} pairs
+        """
+        results = []
+        try:
+            batch_inputs = [
+                {
+                    "job_description": self._preprocess_text(
+                        job.get("description", "")
+                    ),
+                    "job_classification": job.get("job_classification", ""),
+                    "job_type": job.get("job_type", ""),
+                    "position": job.get("position", ""),
+                }
+                for job in jobs
+            ]
+            batch_outputs = self.chain.batch(batch_inputs)
+            for idx, job in enumerate(jobs):
+                job_id = job.get("job_id")
+                results.append(
+                    {"job_id": job_id, "company_criteria": batch_outputs[idx]}
+                )
+        except Exception as e:
+            self.logger.error(
+                f"Error during batch company criteria generation: {str(e)}"
+            )
+            raise RuntimeError(
+                f"Failed to generate company criteria in batch: {str(e)}"
+            )
+        return results

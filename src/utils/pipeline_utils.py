@@ -152,44 +152,16 @@ def hiring_pipeline(
     return pipeline.run(resume_text, job_description)
 
 
-def batch_hiring_pipeline(
-    resumes: Dict[str, str],
-    job_description: str,
-    embedding_type: str = "openai",
-    embedding_model_name: Optional[str] = None,
-) -> Dict[str, Dict[str, str]]:
-    """
-    Process multiple resumes in batch through the complete hiring pipeline.
-
-    Args:
-        resumes: Dictionary of {resume_id: resume_content} pairs
-        job_description: The job description to evaluate against
-        embedding_type: Type of embeddings to use ("openai" or "huggingface")
-        embedding_model_name: Name of the model to use for embeddings (only for HuggingFace
-                              or custom OpenAI models)
-    Returns:
-        Dictionary containing the processed results for each resume
-    """
-    results = {}
-    for resume_id, resume_content in resumes.items():
-        results[resume_id] = hiring_pipeline(
-            resume_text=resume_content,
-            job_description=job_description,
-            embedding_type=embedding_type,
-            embedding_model_name=embedding_model_name,
-        )
-    return results
-
-
 def job_pipeline(
-    job_description: str,
-    embedding_type: str = "openai",
-    embedding_model_name: Optional[str] = None,
+    job_classification: str, job_type: str, position: str, job_description: str
 ) -> Dict[str, str]:
     """
     Run the complete job pipeline (company criteria + previous hires).
 
     Args:
+        job_classification: The job classification to consider
+        job_type: The job type to consider
+        position: The position to consider
         job_description: The job description to analyze
         embedding_type: Type of embeddings to use ("openai" or "huggingface")
         embedding_model_name: Name of the model to use for embeddings (only for HuggingFace
@@ -200,33 +172,37 @@ def job_pipeline(
         - 'previous_hires': Generated previous hire suggestions
     """
     # Initialize the pipeline
-    pipeline = JobPipeline(
-        embedding_type=embedding_type, embedding_model_name=embedding_model_name
+    pipeline = JobPipeline()
+    return pipeline.run(
+        job_classification=job_classification,
+        job_type=job_type,
+        position=position,
+        job_description=job_description,
     )
-    return pipeline.run(job_description)
 
 
 def batch_job_pipeline(
-    job_descriptions: Dict[str, str],
-    embedding_type: str = "openai",
-    embedding_model_name: Optional[str] = None,
+    job_data: pd.DataFrame,
 ) -> Dict[str, Dict[str, str]]:
     """
     Process multiple job descriptions in batch through the complete job pipeline.
 
     Args:
-        job_descriptions: Dictionary of {job_id: job_description} pairs
+        job_data: DataFrame containing job-related information with columns:
+                  'job_id', 'job_classification', 'job_type', 'position', 'description'
         embedding_type: Type of embeddings to use ("openai" or "huggingface")
         embedding_model_name: Name of the model to use for embeddings (only for HuggingFace
                               or custom OpenAI models)
     Returns:
         Dictionary containing the processed results for each job description
     """
-    results = {}
-    for job_id, job_description in job_descriptions.items():
-        results[job_id] = job_pipeline(
-            job_description=job_description,
-            embedding_type=embedding_type,
-            embedding_model_name=embedding_model_name,
-        )
+    pipeline = JobPipeline()
+    # Convert DataFrame to list of dicts for batch processing
+    job_list = job_data.to_dict(orient="records")
+    # add job_id to each dict if not present
+    for idx, job in enumerate(job_list):
+        if "job_id" not in job:
+            job["job_id"] = str(idx)
+    batch_results = pipeline.batch(job_list)
+    results = {res["job_id"]: res for res in batch_results}
     return results

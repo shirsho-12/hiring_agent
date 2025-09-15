@@ -13,6 +13,11 @@ Instructions:
 2. Generate a list of previous hires (use anonymized candidate profiles) who match these requirements.
 3. For each candidate, provide a brief summary of their relevant experience and how they align with the job and company criteria.
 
+Job classification: {job_classification}
+Job type: {job_type}
+Position: {position}
+
+
 Job Description:
 {job_description}
 
