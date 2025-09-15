@@ -22,11 +22,13 @@ This project implements an advanced agentic pipeline for resume screening and ev
 ## Setup
 
 1.  **Install Dependencies**:
+
     ```bash
     pip install -r requirements.txt
     ```
 
 2.  **Set Up Environment Variables**:
+
     - Rename `.env.example` to `.env`.
     - Add your API keys for OpenAI and Weights & Biases:
       ```
@@ -46,45 +48,25 @@ This project implements an advanced agentic pipeline for resume screening and ev
 The pipeline now includes advanced resume processing capabilities:
 
 ### Resume Anonymization
+
 - Removes all personal identifiable information (PII)
 - Strips out hyperlinks and social media handles
 - Standardizes location information to a specified country
 - Replaces company names with generic placeholders
 
 ### Resume Reformatting
+
 - Ensures consistent spacing and layout
 - Standardizes section headers
 - Maintains a clean, professional appearance
 - Preserves a placeholder for candidate names
 
-### Example Usage
-
-```python
-from langchain.llms import OpenAI
-from src.pipeline import HiringPipeline
-
-# Initialize the pipeline with an LLM
-llm = OpenAI(temperature=0.7)
-pipeline = HiringPipeline(llm=llm)
-
-# Process a resume
-with open("path/to/resume.txt", "r") as f:
-    resume_text = f.read()
-
-# Anonymize and reformat the resume
-result = pipeline.process_resume(
-    resume_text=resume_text,
-    country="Canada"  # Standardize to Canadian locations
-)
-
-# Access the processed resume
-print("Anonymized Resume:", result['anonymized'])
-print("\nReformatted Resume:", result['reformatted'])
-```
+<!-- ### Example Usage -->
 
 ## How to Run
 
 1.  **Configure the Pipeline** (Optional):
+
     - To change the models used by the agents, modify the settings in `src/config/config.py`.
     - To update the prompts, edit the files in the `src/prompts/` directory.
     - For resume processing, ensure you provide an LLM instance when initializing the pipeline
@@ -92,14 +74,7 @@ print("\nReformatted Resume:", result['reformatted'])
 2.  **Run the Pipeline**:
 
     For the full pipeline:
-    ```bash
-    python main.py
-    ```
-    
-    For just resume processing, use the example script:
-    ```bash
-    python examples/process_resume_example.py
-    ```
+
     ```bash
     python main.py
     ```

@@ -1,5 +1,3 @@
-import os
-from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.schema import StrOutputParser
 from langchain.schema.runnable import Runnable
@@ -11,7 +9,8 @@ from src.prompts.resume import (
     HR_PROMPT,
     FINAL_SUMMARY_PROMPT,
 )
-from src.config.config import SUMMARIZER_MODEL, API_KEY, BASE_URL, TEMPERATURE
+from src.config.config import SUMMARIZER_MODEL
+from src.models.get_model import get_model
 
 
 class ResumeSummarizerAgent(BaseAgent):
@@ -19,12 +18,7 @@ class ResumeSummarizerAgent(BaseAgent):
 
     def __init__(self):
         super().__init__()
-        self.llm = ChatOpenAI(
-            model=SUMMARIZER_MODEL,
-            base_url=BASE_URL,
-            api_key=API_KEY,
-            temperature=TEMPERATURE,
-        )
+        self.llm = get_model(SUMMARIZER_MODEL)
 
     def _create_sub_agent_chain(self, prompt: str) -> Runnable:
         """Creates a chain for a sub-agent with the given prompt."""

@@ -1,14 +1,14 @@
 import os
 import json
 from typing import Optional, Literal
-from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.schema import StrOutputParser
 from langchain.schema.runnable import Runnable
 from src.agents.base_agent import BaseAgent
 from src.prompts.resume import RESUME_EVALUATOR_PROMPT
 from src.prompts.parser_prompt import EVALUATION_PARSER_PROMPT
-from src.config.config import EVALUATOR_MODEL, API_KEY, BASE_URL, TEMPERATURE
+from src.config.config import EVALUATOR_MODEL
+from src.models.get_model import get_model
 
 # Import the appropriate RAG loader based on the embedding type
 
@@ -35,12 +35,7 @@ class ResumeEvaluatorAgent(BaseAgent):
         super().__init__()
 
         # Initialize LLM
-        self.llm = ChatOpenAI(
-            model=EVALUATOR_MODEL,
-            base_url=BASE_URL,
-            api_key=API_KEY,
-            temperature=TEMPERATURE,
-        )
+        self.llm = get_model(EVALUATOR_MODEL)
 
         # Set up the evaluation chain
         self.prompt_template = PromptTemplate.from_template(RESUME_EVALUATOR_PROMPT)

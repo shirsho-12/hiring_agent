@@ -1,11 +1,11 @@
-from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.schema import StrOutputParser
 from langchain.schema.runnable import Runnable
 
 from src.agents.base_agent import BaseAgent
 from src.prompts.resume import RESUME_EXTRACTOR_PROMPT
-from src.config.config import EXTRACTOR_MODEL, API_KEY, BASE_URL, TEMPERATURE
+from src.config.config import EXTRACTOR_MODEL
+from src.models.get_model import get_model
 
 
 class ResumeExtractorAgent(BaseAgent):
@@ -13,12 +13,7 @@ class ResumeExtractorAgent(BaseAgent):
 
     def __init__(self):
         super().__init__()
-        self.llm = ChatOpenAI(
-            model=EXTRACTOR_MODEL,
-            base_url=BASE_URL,
-            api_key=API_KEY,
-            temperature=TEMPERATURE,
-        )
+        self.llm = get_model(EXTRACTOR_MODEL)
         self.prompt_template = PromptTemplate.from_template(RESUME_EXTRACTOR_PROMPT)
         self.chain: Runnable = self.prompt_template | self.llm | StrOutputParser()
 

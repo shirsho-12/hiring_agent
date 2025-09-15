@@ -1,13 +1,13 @@
 from typing import Dict, Any
 
-from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.schema import StrOutputParser
 from langchain.schema.runnable import Runnable
 
 from src.agents.base_agent import BaseAgent
 from src.prompts.localization import LOCALIZATION_PROMPT
-from src.config.config import LOCALIZATION_MODEL, BASE_URL, API_KEY, TEMPERATURE
+from src.config.config import LOCALIZATION_MODEL
+from src.models.get_model import get_model
 
 
 class LocalizationAgent(BaseAgent):
@@ -27,12 +27,7 @@ class LocalizationAgent(BaseAgent):
         Initialize the LocalizationAgent.
         """
         super().__init__()
-        self.llm = ChatOpenAI(
-            model=LOCALIZATION_MODEL,
-            base_url=BASE_URL,
-            api_key=API_KEY,
-            temperature=TEMPERATURE,
-        )
+        self.llm = get_model(LOCALIZATION_MODEL)
         self.prompt_template = PromptTemplate.from_template(LOCALIZATION_PROMPT)
         self.chain: Runnable = self.prompt_template | self.llm | StrOutputParser()
 

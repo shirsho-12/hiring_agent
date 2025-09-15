@@ -1,13 +1,13 @@
 import re
 from typing import Dict, Any
-from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.schema import StrOutputParser
 from langchain.schema.runnable import Runnable
 
 from src.agents.base_agent import BaseAgent
 from src.prompts.localization import RESUME_ANONYMIZER_PROMPT
-from src.config.config import ANONYMIZER_MODEL, BASE_URL, API_KEY, TEMPERATURE
+from src.config.config import ANONYMIZER_MODEL
+from src.models.get_model import get_model
 
 
 class AnonymizationAgent(BaseAgent):
@@ -30,12 +30,7 @@ class AnonymizationAgent(BaseAgent):
                        Defaults to ANONYMIZER_MODEL from config.
         """
         super().__init__()
-        self.llm = ChatOpenAI(
-            model=ANONYMIZER_MODEL,
-            base_url=BASE_URL,
-            api_key=API_KEY,
-            temperature=TEMPERATURE,
-        )
+        self.llm = get_model(ANONYMIZER_MODEL)
         self.prompt_template = PromptTemplate.from_template(RESUME_ANONYMIZER_PROMPT)
         self.chain: Runnable = self.prompt_template | self.llm | StrOutputParser()
 

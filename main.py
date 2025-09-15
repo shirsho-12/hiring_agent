@@ -35,12 +35,12 @@ if __name__ == "__main__":
             f.write(v)
     # wandb.log(resume_dct)
 
-    # final_resume = hiring_pipeline(
-    #     resume_text=resume_dct["localized"],
-    #     job_description=job_description,
-    #     embedding_type="huggingface",
-    #     embedding_model_name="sentence-transformers/all-MiniLM-L6-v2",
-    # )
+    final_resume = hiring_pipeline(
+        resume_text=resume_dct["localized"],
+        job_description=job_description,
+        embedding_type="huggingface",
+        embedding_model_name="sentence-transformers/all-MiniLM-L6-v2",
+    )
     # wandb.log(final_resume)
 
     # wandb.finish()
