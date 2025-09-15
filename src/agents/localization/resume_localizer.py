@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 from langchain.prompts import PromptTemplate
 from langchain.schema import StrOutputParser
@@ -64,29 +64,45 @@ class LocalizationAgent(BaseAgent):
             )
             raise RuntimeError("Failed to localize resume") from e
 
-    def batch_localize_resumes(
-        self, resumes: Dict[str, str], target_country: str, **kwargs
+    def batch(
+        self, resumes: List[Dict[str, str]], target_country: str, **kwargs
     ) -> Dict[str, Dict[str, Any]]:
         """
         Localize multiple resumes in batch.
 
         Args:
-            resumes: Dictionary of {resume_id: resume_content} pairs
+            resumes: A list of dictionaries where each dictionary contains a resume ID and its text.
             target_country: The target country/region for localization
             **kwargs: Additional parameters to pass to localize_resume
 
         Returns:
             Dictionary of {resume_id: localization_result} pairs
         """
-        results = {}
-        for resume_id, resume_content in resumes.items():
-            try:
-                results[resume_id] = self.run(
-                    resume_text=resume_content,
-                    target_country=target_country,
+        results = []
+        try:
+            batch_inputs = [
+                {
+                    "resume_text": resume["resume_text"],
+                    "target_country": target_country,
                     **kwargs,
+                }
+                for resume in resumes
+            ]
+            batch_outputs = self.chain.batch(batch_inputs)
+            for idx, resume in enumerate(resumes):
+                results.append(
+                    {
+                        "resume_id": resume["resume_id"],
+                        "localized_text": batch_outputs[idx],
+                    }
                 )
-            except Exception as e:
-                self.logger.error(f"Error processing resume {resume_id}: {str(e)}")
-                results[resume_id] = {"error": str(e), "success": False}
+        except Exception as e:
+            self.logger.error(f"Error processing batch localization: {str(e)}")
+            for resume in resumes:
+                results.append(
+                    {
+                        "resume_id": resume["resume_id"],
+                        "error": str(e),
+                    }
+                )
         return results

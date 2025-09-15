@@ -31,3 +31,6 @@ JOB_MODEL = os.environ.get("JOB_MODEL", DEFAULT_MODEL)
 
 
 TEMPERATURE = float(os.environ.get("LLM_TEMPERATURE", 0.0))
+
+
+LOGGING_LEVEL = os.environ.get("LOGGING_LEVEL", "ERROR").upper()

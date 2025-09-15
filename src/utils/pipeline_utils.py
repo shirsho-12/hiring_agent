@@ -9,6 +9,7 @@ using the pipeline components.
 
 from typing import Dict, Optional
 from ..pipeline import LocalizationPipeline, HiringPipeline, JobPipeline
+import pandas as pd
 
 
 def process_resume_pipeline(
@@ -52,20 +53,74 @@ def process_resume_pipeline(
 
 
 def batch_process_resumes(
-    resumes: Dict[str, str],
+    resumes: pd.Series,
+    country: str = "Singapore",
 ) -> Dict[str, Dict[str, str]]:
     """
     Process multiple resumes in batch through the complete pipeline.
 
     Args:
-        resumes: Dictionary of {resume_id: resume_content} pairs
+        resumes: Pandas Series of resume contents, indexed by resume_id
 
     Returns:
         Dictionary containing the processed results for each resume
     """
+    pipeline = LocalizationPipeline(target_country=country)
+    # Convert pandas Series to list of dicts for batch processing
+    resume_list = [
+        {"resume_id": idx, "resume_text": text} for idx, text in resumes.items()
+    ]
+    # Step 1: Anonymize the resumes
+    anonymized = pipeline.batch(
+        resume_list, anonymize=True, reformat=False, localize=False
+    )
+    # Step 2: Reformat the anonymized resumes
+    reformatted = pipeline.batch(
+        [
+            {"resume_id": r["resume_id"], "resume_text": r["anonymized_text"]}
+            for r in anonymized
+        ],
+        anonymize=False,
+        reformat=True,
+        localize=False,
+    )
+    # Step 3: Localize the reformatted resumes
+    localized = pipeline.batch(
+        [
+            {"resume_id": r["resume_id"], "resume_text": r["reformatted_text"]}
+            for r in reformatted
+        ],
+        anonymize=False,
+        reformat=False,
+        localize=True,
+    )
+
+    # Combine results by resume_id
     results = {}
-    for resume_id, resume_content in resumes.items():
-        results[resume_id] = process_resume_pipeline(resume_content)
+    for r in resume_list:
+        resume_id = r["resume_id"]
+        results[resume_id] = {
+            "anonymized": next(
+                (
+                    x["anonymized_text"]
+                    for x in anonymized
+                    if x["resume_id"] == resume_id
+                ),
+                None,
+            ),
+            "reformatted": next(
+                (
+                    x["reformatted_text"]
+                    for x in reformatted
+                    if x["resume_id"] == resume_id
+                ),
+                None,
+            ),
+            "localized": next(
+                (x["localized_text"] for x in localized if x["resume_id"] == resume_id),
+                None,
+            ),
+        }
     return results
 
 

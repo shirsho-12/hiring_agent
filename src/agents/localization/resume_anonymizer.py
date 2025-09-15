@@ -1,5 +1,5 @@
 import re
-from typing import Dict, Any
+from typing import Dict, Any, List
 from langchain.prompts import PromptTemplate
 from langchain.schema import StrOutputParser
 from langchain.schema.runnable import Runnable
@@ -85,21 +85,37 @@ class AnonymizationAgent(BaseAgent):
             self.logger.error(f"Error during resume anonymization: {str(e)}")
             raise RuntimeError(f"Failed to anonymize resume: {str(e)}")
 
-    def batch_process(self, resumes: Dict[str, str]) -> Dict[str, str]:
+    def batch(self, resumes: List[Dict[str, str]]) -> List[Dict[str, str]]:
         """
         Process multiple resumes in batch.
 
         Args:
-            resumes: Dictionary of {resume_id: resume_text} pairs
+            resumes: List of dictionaries containing resume_id and resume_text
 
         Returns:
-            Dictionary of {resume_id: anonymization_result} pairs
+            List of dictionaries containing anonymization results
         """
-        results = {}
-        for resume_id, text in resumes.items():
-            try:
-                results[resume_id] = self.run(text)
-            except Exception as e:
-                self.logger.error(f"Error processing resume {resume_id}: {str(e)}")
-                results[resume_id] = {"error": str(e), "success": False}
+        results = []
+        try:
+            batch_inputs = [
+                {"resume_text": self._preprocess_text(resume["resume_text"])}
+                for resume in resumes
+            ]
+            batch_outputs = self.chain.batch(batch_inputs)
+            for idx, resume in enumerate(resumes):
+                results.append(
+                    {
+                        "resume_id": resume["resume_id"],
+                        "anonymized_text": batch_outputs[idx],
+                    }
+                )
+        except Exception as e:
+            self.logger.error(f"Error processing batch anonymization: {str(e)}")
+            for resume in resumes:
+                results.append(
+                    {
+                        "resume_id": resume["resume_id"],
+                        "error": str(e),
+                    }
+                )
         return results

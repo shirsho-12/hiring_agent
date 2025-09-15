@@ -1,3 +1,4 @@
+from typing import Dict, List
 from src.agents.base_agent import BaseAgent
 from langchain.prompts import PromptTemplate
 from langchain.schema import StrOutputParser
@@ -26,3 +27,36 @@ class ResumeReformatterAgent(BaseAgent):
         except Exception as e:
             self.logger.error(f"Error during resume reformatting: {e}")
             raise RuntimeError("Failed to reformat resume") from e
+
+    def batch(self, resumes: List[Dict[str, str]]) -> Dict[str, str]:
+        """
+        Process multiple resumes in batch.
+
+        Args:
+            resumes: A list of dictionaries where each dictionary contains a resume ID and its text.
+        Returns:
+            A dictionary where keys are resume IDs and values are reformatted resume texts.
+        """
+        results = []
+        try:
+            batch_inputs = [
+                {"resume_text": resume["resume_text"]} for resume in resumes
+            ]
+            batch_outputs = self.chain.batch(batch_inputs)
+            for idx, resume in enumerate(resumes):
+                results.append(
+                    {
+                        "resume_id": resume["resume_id"],
+                        "reformatted_text": batch_outputs[idx],
+                    }
+                )
+        except Exception as e:
+            self.logger.error(f"Error processing batch reformatting: {str(e)}")
+            for resume in resumes:
+                results.append(
+                    {
+                        "resume_id": resume["resume_id"],
+                        "error": str(e),
+                    }
+                )
+        return results

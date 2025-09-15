@@ -5,6 +5,7 @@ This module provides a unified interface for processing resumes,
 including localization and anonymization.
 """
 
+from typing import Dict
 from src.pipeline.base_pipeline import BasePipeline
 from ..agents.localization import (
     AnonymizationAgent,
@@ -76,3 +77,50 @@ class LocalizationPipeline(BasePipeline):
         except Exception as e:
             self.logger.error(f"Error processing resume: {str(e)}", exc_info=True)
             raise RuntimeError("Failed to process resume") from e
+
+    def batch(
+        self,
+        resumes: Dict[str, str],
+        anonymize: bool = True,
+        reformat: bool = True,
+        localize: bool = True,
+    ) -> dict:
+        """
+        Process multiple resumes in batch with optional anonymization and localization.
+
+        Args:
+            resumes: Dictionary of {resume_id: resume_content} pairs
+            target_country: Target country/region code (e.g., 'SG', 'US', 'JP')
+            anonymize: Whether to anonymize the resumes
+            localize: Whether to localize the resumes
+
+        Returns:
+            Dictionary of {resume_id: processed_content} pairs
+        """
+        current_resumes = resumes.copy()
+
+        try:
+            # Step 1: Anonymization
+            if anonymize:
+                anonymized_content = self.anonymizer.batch(resumes=current_resumes)
+                self.logger.info("Anonymized resume:\n %s", anonymized_content)
+                current_resumes = anonymized_content
+            # Step 2: Reformatting
+            if reformat:
+                reformatted_content = self.reformatter.batch(resumes=current_resumes)
+                self.logger.info("Reformatted resume:\n %s", reformatted_content)
+                current_resumes = reformatted_content
+            # Step 3: Localization
+            if localize:
+                localized_content = self.localizer.batch(
+                    resumes=current_resumes,
+                    target_country=self.target_country,
+                )
+                self.logger.info("Localized resume:\n %s", localized_content)
+                current_resumes = localized_content
+            return current_resumes
+        except Exception as e:
+            self.logger.error(
+                f"Error batch processing resumes: {str(e)}", exc_info=True
+            )
+            raise RuntimeError("Failed to process resumes") from e
