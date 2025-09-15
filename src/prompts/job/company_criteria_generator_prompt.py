@@ -13,6 +13,10 @@ Instructions:
 2. Generate a list of criteria that reflect what the company is seeking or prioritizing (e.g., culture, skills, experience, work environment, diversity, benefits, etc.).
 3. For each criterion, provide a concise one-line description explaining its relevance or importance.
 
+Job classification: {job_classification}
+Job type: {job_type}
+Position: {position}
+
 Job Description:
 {job_description}
 
