@@ -8,7 +8,12 @@ using the pipeline components.
 """
 
 from typing import Dict, Optional
-from ..pipeline import LocalizationPipeline, HiringPipeline, JobPipeline
+from ..pipeline import (
+    LocalizationPipeline,
+    HiringPipeline,
+    JobPipeline,
+    AnalysisPipeline,
+)
 import pandas as pd
 
 
@@ -205,4 +210,46 @@ def batch_job_pipeline(
             job["job_id"] = str(idx)
     batch_results = pipeline.batch(job_list)
     results = {res["job_id"]: res for res in batch_results}
+    return results
+
+
+def analysis_pipeline(
+    resume_text: str,
+) -> Dict[str, str]:
+    """
+    Run the complete analysis pipeline (name and demographic predictions).
+
+    Args:
+        resume_text: The original resume content
+
+    Returns:
+        Dictionary containing:
+        - 'name': Predicted name from the resume
+        - 'ethnicity': Predicted ethnicity from the resume
+    """
+    pipeline = AnalysisPipeline()
+    return pipeline.run(resume_text)
+
+
+def batch_analysis_pipeline(
+    resumes: pd.Series,
+) -> Dict[str, Dict[str, str]]:
+    """
+    Process multiple resumes in batch through the complete analysis pipeline.
+
+    Args:
+        resumes: Pandas Series of resume contents, indexed by resume_id
+
+    Returns:
+        Dictionary containing the processed results for each resume
+    """
+    pipeline = AnalysisPipeline()
+    resume_list = [
+        {"resume_id": idx, "resume_text": text} for idx, text in resumes.items()
+    ]
+    resumes = [
+        {"resume_id": idx, "resume_text": text} for idx, text in enumerate(resume_list)
+    ]
+    batch_results = pipeline.batch(resumes)
+    results = {res["resume_id"]: res for res in batch_results}
     return results
