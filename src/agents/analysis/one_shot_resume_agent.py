@@ -4,7 +4,7 @@ from langchain.schema import StrOutputParser
 from langchain.schema.runnable import Runnable
 
 from src.agents.base_agent import BaseAgent
-from src.prompts import NAME_PROMPT, AGE_PROMPT
+from src.prompts import NAME_PROMPT, AGE_PROMPT, WORK_EXPERIENCE_PROMPT
 from src.config.config import DEFAULT_MODEL
 from src.models.get_model import get_model
 
@@ -21,7 +21,7 @@ class OneShotResumeAgent(BaseAgent):
         Initialize the OneShotResumeAgent.
 
         Args:
-            mode: Either "name" or "age" to select the prompt.
+            mode: Either "name", "age", or "work_experience" to select the prompt.
         """
         super().__init__()
         self.llm = get_model(DEFAULT_MODEL)
@@ -29,8 +29,10 @@ class OneShotResumeAgent(BaseAgent):
             self.prompt_template = PromptTemplate.from_template(NAME_PROMPT)
         elif mode == "age":
             self.prompt_template = PromptTemplate.from_template(AGE_PROMPT)
+        elif mode == "work_experience":
+            self.prompt_template = PromptTemplate.from_template(WORK_EXPERIENCE_PROMPT)
         else:
-            raise ValueError("mode must be either 'name' or 'age'")
+            raise ValueError("mode must be either 'name', 'age', or 'work_experience'")
         self.chain: Runnable = self.prompt_template | self.llm | StrOutputParser()
 
     def run(self, resume_text: str) -> str:

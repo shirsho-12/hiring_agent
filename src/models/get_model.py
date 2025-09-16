@@ -1,9 +1,9 @@
-from src.config.config import DEFAULT_API, DEFAULT_MODEL
+from src.config.config import DEFAULT_API, DEFAULT_MODEL, TEMPERATURE
 
 from src.models import HuggingFaceModel, OpenAIModel
 
 
-def get_model(model_name: str = None):
+def get_model(model_name: str = None, temperature: float = TEMPERATURE):
     """
     Returns a chat model instance based on the config setting and model name.
 
@@ -16,8 +16,8 @@ def get_model(model_name: str = None):
     model_name = model_name or DEFAULT_MODEL
 
     if DEFAULT_API == "huggingface":
-        return HuggingFaceModel(model_name=model_name)
+        return HuggingFaceModel(model_name=model_name, temperature=temperature)
     elif DEFAULT_API in ("openrouter", "openai"):
-        return OpenAIModel(model_name=model_name)
+        return OpenAIModel(model_name=model_name, temperature=temperature)
     else:
         raise ValueError(f"Unsupported DEFAULT_API: {DEFAULT_API}")

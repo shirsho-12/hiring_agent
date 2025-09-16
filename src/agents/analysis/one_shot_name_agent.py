@@ -24,7 +24,10 @@ class OneShotNameAgent(BaseAgent):
             mode: Either "ethnicity" or "gender" to select the prompt.
         """
         super().__init__()
-        self.llm = get_model(DEFAULT_MODEL)
+        self.llm = get_model(
+            DEFAULT_MODEL,
+            temperature=0.9,  # Use a high temperature for creativity
+        )
         if mode == "ethnicity":
             self.prompt_template = PromptTemplate.from_template(ETHNICITY_PROMPT)
         elif mode == "gender":

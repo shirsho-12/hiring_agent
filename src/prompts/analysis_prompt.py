@@ -27,3 +27,16 @@ Resume: {resume_text}
 
 ONLY OUTPUT THE AGE RANGE. NO EXPLANATIONS OR ADDITIONAL TEXT.
 """
+
+WORK_EXPERIENCE_PROMPT = """
+Given the following anonymized resume from Singapore, extract the person's work experiences in the format:
+{{
+"company": company name,
+"position": position held,
+"start_date": start date (YYYY-MM),
+"end_date": end date (YYYY-MM or "Present"),
+}}
+List all work experiences in a JSON array. If any field is missing, use null for that field.
+Resume: {resume_text}
+ONLY OUTPUT THE JSON ARRAY. NO EXPLANATIONS OR ADDITIONAL TEXT.
+"""
